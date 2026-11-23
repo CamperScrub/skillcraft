@@ -7,7 +7,8 @@ import net.minecraft.world.level.block.Blocks;
 
 public final class MiningXp {
 
-    private MiningXp() {}
+    private MiningXp() {
+    }
 
     public static BlockXpTable table() {
         return BlockXpTable.builder(Skill.MINING)

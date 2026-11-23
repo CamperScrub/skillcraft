@@ -14,8 +14,6 @@ import java.util.function.Predicate;
  */
 public final class BlockXpTable {
 
-    private record Entry(Predicate<BlockState> matches, long xp) {}
-
     private final Skill skill;
     private final boolean requiresCorrectTool;
     private final List<Entry> entries;
@@ -24,6 +22,10 @@ public final class BlockXpTable {
         this.skill = builder.skill;
         this.requiresCorrectTool = builder.requiresCorrectTool;
         this.entries = List.copyOf(builder.entries);
+    }
+
+    public static Builder builder(Skill skill) {
+        return new Builder(skill);
     }
 
     public Skill skill() {
@@ -49,14 +51,13 @@ public final class BlockXpTable {
         return 0L;
     }
 
-    public static Builder builder(Skill skill) {
-        return new Builder(skill);
+    private record Entry(Predicate<BlockState> matches, long xp) {
     }
 
     public static final class Builder {
         private final Skill skill;
-        private boolean requiresCorrectTool;
         private final List<Entry> entries = new ArrayList<>();
+        private boolean requiresCorrectTool;
 
         private Builder(Skill skill) {
             this.skill = skill;
@@ -79,7 +80,7 @@ public final class BlockXpTable {
             if (xp <= 0) throw new IllegalArgumentException("XP must be positive, got " + xp);
             entries.add(new Entry(matches, xp));
             return this;
-    }
+        }
 
         public BlockXpTable build() {
             return new BlockXpTable(this);
@@ -92,7 +93,9 @@ public final class BlockXpTable {
             return this;
         }
 
-        /** Blocks that should never give this skill XP, even if a later tag would match them. */
+        /**
+         * Blocks that should never give this skill XP, even if a later tag would match them.
+         */
         public Builder exclude(Block block) {
             entries.add(new Entry(state -> state.is(block), 0));
             return this;

@@ -57,4 +57,12 @@ class XpRulesTest {
         assertThrows(IllegalArgumentException.class,
                 () -> rules.award(PlayerSkills.EMPTY, Skill.MINING, -5));
     }
+
+    @Test
+    void hugeAmountsDoNotOverflow() {
+        PlayerSkills start = PlayerSkills.EMPTY.withXp(Skill.MINING, 1_000);
+        XpAward award = rules.award(start, Skill.MINING, Long.MAX_VALUE);
+        assertEquals(MAX_XP, award.updated().xp(Skill.MINING));
+        assertEquals(MAX_XP - 1_000, award.gained());
+    }
 }

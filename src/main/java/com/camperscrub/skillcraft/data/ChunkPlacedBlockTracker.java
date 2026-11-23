@@ -4,7 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
-/** Stores placed positions in a persistent attachment on each chunk. */
+/**
+ * Stores placed positions in a persistent attachment on each chunk.
+ */
 public final class ChunkPlacedBlockTracker implements PlacedBlockTracker {
 
     @Override

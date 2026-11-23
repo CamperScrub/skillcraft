@@ -8,7 +8,8 @@ import net.minecraft.world.level.block.Blocks;
 
 public final class ExcavationXp {
 
-    private ExcavationXp() {}
+    private ExcavationXp() {
+    }
 
     public static BlockXpTable table() {
         return BlockXpTable.builder(Skill.EXCAVATION)
@@ -28,7 +29,6 @@ public final class ExcavationXp {
                 .tag(ConventionalBlockTags.GRAVELS, 40)
                 .tag(ConventionalBlockTags.SANDS, 40)
                 .block(Blocks.SNOW, 20)                                 // snow layer
-                .block(Blocks.SNOW, 20)
                 .exclude(Blocks.MOSS_BLOCK)
                 .exclude(Blocks.PALE_MOSS_BLOCK)
                 .tag(BlockTags.DIRT, 40)            // fallback: modded dirt

@@ -26,9 +26,11 @@ public final class XpRules {
         }
         long currentXp = current.xp(skill);
         long maxXp = curve.totalXpForLevel(curve.maxLevel());
-        long targetXp = Math.min(currentXp + amount, maxXp);
-        long actualGained = targetXp - currentXp;
-        long newTotalXp = currentXp + actualGained;
+
+        // Cap the amount before adding, so the sum can't overflow
+        long newTotalXp = Math.min(currentXp + Math.min(amount, maxXp), maxXp);
+        long actualGained = newTotalXp - currentXp;
+
         int oldLevel = curve.levelForXp(currentXp);
         int newLevel = curve.levelForXp(newTotalXp);
         PlayerSkills updatedSkills = current.withXp(skill, newTotalXp);

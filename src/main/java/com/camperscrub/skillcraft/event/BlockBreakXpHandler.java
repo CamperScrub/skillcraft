@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-/** Turns "a block was broken" into XP awards. Holds no rules of its own. */
+/**
+ * Turns "a block was broken" into XP awards. Holds no rules of its own.
+ */
 public final class BlockBreakXpHandler {
 
     private final XpService xpService;

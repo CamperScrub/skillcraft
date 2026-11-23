@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -42,7 +41,7 @@ public final class SkillAttachments {
     // --- The attachment itself (must come AFTER the codecs; see below) ---
 
     public static final AttachmentType<PlayerSkills> PLAYER_SKILLS = AttachmentRegistry.create(
-            Identifier.fromNamespaceAndPath(SkillCraft.MOD_ID, "player_skills"),
+            SkillCraft.id("player_skills"),
             builder -> builder
                     .initializer(() -> PlayerSkills.EMPTY)
                     .persistent(SAVE_CODEC)
@@ -56,7 +55,7 @@ public final class SkillAttachments {
             placed -> List.copyOf(placed.positions()));
 
     public static final AttachmentType<PlacedBlocks> PLACED_BLOCKS = AttachmentRegistry.create(
-            Identifier.fromNamespaceAndPath(SkillCraft.MOD_ID, "placed_blocks"),
+            SkillCraft.id("placed_blocks"),
             builder -> builder.persistent(PLACED_BLOCKS_CODEC));
 
     /**

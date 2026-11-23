@@ -51,15 +51,13 @@ public final class LinearTailXpCurve implements XpCurve {
 
     @Override
     public float progressToNextLevel(long currentXp) {
-        int currentLevel = levelForXp(currentXp);
+        long xp = Math.max(currentXp, 0);
+        int currentLevel = levelForXp(xp);
         if (currentLevel == maxLevel) {
             return 1.0f;
         }
-        if (currentLevel == 0) {
-            return 0.0f;
-        }
         long levelStart = totalXp[currentLevel];
         long levelEnd = totalXp[currentLevel + 1];
-        return (float) (currentXp - levelStart) / (levelEnd - levelStart);
+        return (float) (xp - levelStart) / (levelEnd - levelStart);
     }
 }

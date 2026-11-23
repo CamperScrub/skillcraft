@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LinearTailXpCurveTest {
 
@@ -63,5 +64,10 @@ class LinearTailXpCurveTest {
     @Test
     void progressIsNeverNegative() {
         assertEquals(0f, curve.progressToNextLevel(-100), 1e-6);
+    }
+
+    @Test
+    void progressThroughLevelZero() {
+        assertEquals(0.4866f, curve.progressToNextLevel(1_000), 0.001);
     }
 }
