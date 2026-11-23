@@ -1,13 +1,19 @@
 package com.camperscrub.skillcraft;
 
 import com.camperscrub.skillcraft.data.SkillAttachments;
-import com.camperscrub.skillcraft.event.DebugXpHook;
+import com.camperscrub.skillcraft.event.BlockBreakXpHandler;
+import com.camperscrub.skillcraft.skill.excavation.ExcavationXp;
+import com.camperscrub.skillcraft.skill.mining.MiningXp;
+import com.camperscrub.skillcraft.skill.woodcutting.WoodcuttingXp;
+import com.camperscrub.skillcraft.xp.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class SkillCraft implements ModInitializer {
 	public static final String MOD_ID = "skillcraft";
@@ -25,7 +31,15 @@ public class SkillCraft implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 
 		SkillAttachments.init();
-		DebugXpHook.register();
+
+		XpCurve curve = new LinearTailXpCurve(LinearTailSettings.DEFAULTS);
+		XpService xpService = new XpService(new XpRules(curve));
+
+		new BlockBreakXpHandler(xpService, List.of(
+				MiningXp.table(),
+				WoodcuttingXp.table(),
+				ExcavationXp.table()
+		)).register();
 	}
 
 	public static Identifier id(String path) {
