@@ -12,12 +12,26 @@ public final class ExcavationXp {
 
     public static BlockXpTable table() {
         return BlockXpTable.builder(Skill.EXCAVATION)
-                .block(Blocks.CLAY, 60)
-                .tag(BlockTags.DIRT, 40)                 // dirt, grass, podzol, mycelium...
-                .tag(BlockTags.SAND, 40)
-                .tag(ConventionalBlockTags.GRAVELS, 40)
+                .block(Blocks.MUDDY_MANGROVE_ROOTS, 90)
+                .block(Blocks.MUD, 80)
+                .block(Blocks.ROOTED_DIRT, 60)
+                .block(Blocks.DIRT, 40)
+                .block(Blocks.GRASS_BLOCK, 40)
+                .block(Blocks.COARSE_DIRT, 40)
+                .block(Blocks.PODZOL, 40)
+                .block(Blocks.MYCELIUM, 40)
+                .block(Blocks.CLAY, 40)
+                .block(Blocks.SNOW_BLOCK, 40)
                 .block(Blocks.SOUL_SAND, 40)
                 .block(Blocks.SOUL_SOIL, 40)
+                .tag(BlockTags.SAND, 40)                                // sand and red sand
+                .tag(ConventionalBlockTags.GRAVELS, 40)
+                .tag(ConventionalBlockTags.SANDS, 40)
+                .block(Blocks.SNOW, 20)                                 // snow layer
+                .block(Blocks.SNOW, 20)
+                .exclude(Blocks.MOSS_BLOCK)
+                .exclude(Blocks.PALE_MOSS_BLOCK)
+                .tag(BlockTags.DIRT, 40)            // fallback: modded dirt
                 .build();
     }
 }

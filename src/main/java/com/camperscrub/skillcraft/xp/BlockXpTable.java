@@ -84,5 +84,18 @@ public final class BlockXpTable {
         public BlockXpTable build() {
             return new BlockXpTable(this);
         }
+
+        public Builder blocks(long xp, Block... blocks) {
+            for (Block block : blocks) {
+                block(block, xp);
+            }
+            return this;
+        }
+
+        /** Blocks that should never give this skill XP, even if a later tag would match them. */
+        public Builder exclude(Block block) {
+            entries.add(new Entry(state -> state.is(block), 0));
+            return this;
+        }
     }
 }
