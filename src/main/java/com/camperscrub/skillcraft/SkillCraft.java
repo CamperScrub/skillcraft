@@ -1,7 +1,10 @@
 package com.camperscrub.skillcraft;
 
+import com.camperscrub.skillcraft.data.ChunkPlacedBlockTracker;
+import com.camperscrub.skillcraft.data.PlacedBlockTracker;
 import com.camperscrub.skillcraft.data.SkillAttachments;
 import com.camperscrub.skillcraft.event.BlockBreakXpHandler;
+import com.camperscrub.skillcraft.event.BlockPlacedCallback;
 import com.camperscrub.skillcraft.skill.excavation.ExcavationXp;
 import com.camperscrub.skillcraft.skill.mining.MiningXp;
 import com.camperscrub.skillcraft.skill.woodcutting.WoodcuttingXp;
@@ -34,8 +37,10 @@ public class SkillCraft implements ModInitializer {
 
 		XpCurve curve = new LinearTailXpCurve(LinearTailSettings.DEFAULTS);
 		XpService xpService = new XpService(new XpRules(curve));
+		PlacedBlockTracker placedBlocks = new ChunkPlacedBlockTracker();
+		BlockPlacedCallback.EVENT.register(placedBlocks::markPlaced);
 
-		new BlockBreakXpHandler(xpService, List.of(
+		new BlockBreakXpHandler(xpService, placedBlocks, List.of(
 				MiningXp.table(),
 				WoodcuttingXp.table(),
 				ExcavationXp.table()

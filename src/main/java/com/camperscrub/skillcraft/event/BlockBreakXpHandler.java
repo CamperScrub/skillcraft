@@ -1,6 +1,7 @@
 package com.camperscrub.skillcraft.event;
 
 import com.camperscrub.skillcraft.SkillCraft;
+import com.camperscrub.skillcraft.data.PlacedBlockTracker;
 import com.camperscrub.skillcraft.xp.BlockXpTable;
 import com.camperscrub.skillcraft.xp.XpAward;
 import com.camperscrub.skillcraft.xp.XpService;
@@ -17,10 +18,12 @@ import java.util.List;
 public final class BlockBreakXpHandler {
 
     private final XpService xpService;
+    private final PlacedBlockTracker placedBlocks;
     private final List<BlockXpTable> tables;
 
-    public BlockBreakXpHandler(XpService xpService, List<BlockXpTable> tables) {
+    public BlockBreakXpHandler(XpService xpService, PlacedBlockTracker placedBlocks, List<BlockXpTable> tables) {
         this.xpService = xpService;
+        this.placedBlocks = placedBlocks;
         this.tables = List.copyOf(tables);
     }
 
@@ -29,7 +32,8 @@ public final class BlockBreakXpHandler {
     }
 
     private void onBlockBroken(Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
-        if (player.isCreative()) {
+        boolean wasPlaced = placedBlocks.unmark(level, pos);
+        if (wasPlaced || player.isCreative()) {
             return;
         }
         for (BlockXpTable table : tables) {

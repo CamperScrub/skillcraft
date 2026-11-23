@@ -13,10 +13,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class SkillAttachments {
 
@@ -51,6 +48,16 @@ public final class SkillAttachments {
                     .persistent(SAVE_CODEC)
                     .copyOnDeath()
                     .syncWith(SYNC_CODEC, AttachmentSyncPredicate.targetOnly()));
+
+    // --- Placed blocks (per chunk, server only) ---
+
+    private static final Codec<PlacedBlocks> PLACED_BLOCKS_CODEC = Codec.LONG.listOf().xmap(
+            list -> new PlacedBlocks(Set.copyOf(list)),
+            placed -> List.copyOf(placed.positions()));
+
+    public static final AttachmentType<PlacedBlocks> PLACED_BLOCKS = AttachmentRegistry.create(
+            Identifier.fromNamespaceAndPath(SkillCraft.MOD_ID, "placed_blocks"),
+            builder -> builder.persistent(PLACED_BLOCKS_CODEC));
 
     /**
      * Call once from onInitialize so the attachment is registered at startup.

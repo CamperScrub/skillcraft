@@ -3,7 +3,7 @@
 	"package": "com.camperscrub.skillcraft.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"ExampleMixin"
+		"BlockItemMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
