@@ -1,5 +1,7 @@
 package com.camperscrub.skillcraft;
 
+import com.camperscrub.skillcraft.data.SkillAttachments;
+import com.camperscrub.skillcraft.event.DebugXpHook;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
@@ -20,8 +22,10 @@ public class SkillCraft implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-
 		LOGGER.info("Hello Fabric world!");
+
+		SkillAttachments.init();
+		DebugXpHook.register();
 	}
 
 	public static Identifier id(String path) {
