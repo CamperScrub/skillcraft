@@ -8,7 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class XpRulesTest {
 
-    private static final long MAX_XP = 14_958_708;
+    private static final int MAX_LEVEL = 1000;
+    private static final long MAX_XP = 15_005_851;  // total XP for level 1000
     private final XpRules rules = new XpRules(new LinearTailXpCurve(LinearTailSettings.DEFAULTS));
 
     @Test
@@ -33,7 +34,7 @@ class XpRulesTest {
         XpAward award = rules.award(PlayerSkills.EMPTY, Skill.MINING, 20_000_000);
         assertEquals(MAX_XP, award.updated().xp(Skill.MINING));
         assertEquals(MAX_XP, award.gained());
-        assertEquals(999, award.newLevel());
+        assertEquals(MAX_LEVEL, award.newLevel());
     }
 
     @Test

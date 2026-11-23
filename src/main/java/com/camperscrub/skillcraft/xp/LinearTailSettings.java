@@ -2,7 +2,7 @@ package com.camperscrub.skillcraft.xp;
 
 public record LinearTailSettings(int maxLevel, long base, double slope, double tailSize, double tailDoubling) {
 
-    public static final LinearTailSettings DEFAULTS = new LinearTailSettings(999, 2000, 17, 55, 111);
+    public static final LinearTailSettings DEFAULTS = new LinearTailSettings(1000, 2000, 17, 55, 111);
 
     // A "compact constructor": runs before the fields are set, so it can reject bad values.
     public LinearTailSettings {
