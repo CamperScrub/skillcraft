@@ -1,12 +1,13 @@
 package com.camperscrub.skillcraft;
 
-import com.camperscrub.skillcraft.data.ChunkPlacedBlockTracker;
-import com.camperscrub.skillcraft.data.PlacedBlockTracker;
-import com.camperscrub.skillcraft.data.SkillAttachments;
+import com.camperscrub.skillcraft.data.*;
 import com.camperscrub.skillcraft.event.BlockBreakXpHandler;
 import com.camperscrub.skillcraft.event.BlockPlacedCallback;
+import com.camperscrub.skillcraft.event.CombatXpHandler;
+import com.camperscrub.skillcraft.event.MobSpawnedCallback;
 import com.camperscrub.skillcraft.skill.excavation.ExcavationXp;
 import com.camperscrub.skillcraft.skill.mining.MiningXp;
+import com.camperscrub.skillcraft.skill.swordsmanship.SwordsmanshipXp;
 import com.camperscrub.skillcraft.skill.woodcutting.WoodcuttingXp;
 import com.camperscrub.skillcraft.xp.*;
 import net.fabricmc.api.ModInitializer;
@@ -39,5 +40,10 @@ public class SkillCraft implements ModInitializer {
                 WoodcuttingXp.table(),
                 ExcavationXp.table()
         )).register();
+
+        SpawnOriginTracker spawnOrigins = new AttachmentSpawnOriginTracker();
+        MobSpawnedCallback.EVENT.register(spawnOrigins::record);
+
+        new CombatXpHandler(xpService, new CombatXpRules(0.5), SwordsmanshipXp.mobTable(), spawnOrigins).register();
     }
 }

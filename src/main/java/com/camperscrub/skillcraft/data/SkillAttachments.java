@@ -16,7 +16,8 @@ import java.util.*;
 
 public final class SkillAttachments {
 
-    private SkillAttachments() {}
+    private SkillAttachments() {
+    }
 
     // --- Save format: readable and robust, keyed by skill id ---
 
@@ -58,10 +59,25 @@ public final class SkillAttachments {
             SkillCraft.id("placed_blocks"),
             builder -> builder.persistent(PLACED_BLOCKS_CODEC));
 
+    // --- Spawn origin (per mob, server only) ---
+
+    private static final Codec<SpawnOrigin> SPAWN_ORIGIN_CODEC = Codec.STRING.comapFlatMap(
+            id -> SpawnOrigin.byId(id)
+                    .map(DataResult::success)
+                    .orElseGet(() -> DataResult.error(() -> "Unknown spawn origin: " + id)),
+            SpawnOrigin::id);
+
+    public static final AttachmentType<SpawnOrigin> SPAWN_ORIGIN = AttachmentRegistry.create(
+            SkillCraft.id("spawn_origin"),
+            builder -> builder
+                    .persistent(SPAWN_ORIGIN_CODEC)
+                    .copyOnDeath()); // on mobs, this also covers conversions like zombie → drowned
+
     /**
      * Call once from onInitialize so the attachment is registered at startup.
      */
-    public static void init() {}
+    public static void init() {
+    }
 
     private static List<Long> toOrderedList(PlayerSkills skills) {
         return Arrays.stream(Skill.values()).map(skills::xp).toList();
