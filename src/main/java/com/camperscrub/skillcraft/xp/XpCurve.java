@@ -27,4 +27,21 @@ public interface XpCurve {
      * Returns 1.0 at maxLevel(), since there is no next level.
      */
     float progressToNextLevel(long currentXp);
+
+    /** XP earned since reaching the current level. */
+    default long xpIntoLevel(long totalXp) {
+        long xp = Math.max(totalXp, 0);
+        return xp - totalXpForLevel(levelForXp(xp));
+    }
+
+    /** XP the current level takes from start to finish (from reaching it to reaching the next). 0 at max level. */
+    default long xpSpanOfLevel(long totalXp) {
+        long xp = Math.max(totalXp, 0);
+        int currentLevel = levelForXp(xp);
+        if (currentLevel == maxLevel()) {
+            return 0;
+        }
+        int nextLevel = currentLevel + 1;
+        return totalXpForLevel(nextLevel) - totalXpForLevel(currentLevel);
+    }
 }

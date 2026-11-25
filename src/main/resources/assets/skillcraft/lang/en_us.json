@@ -9,5 +9,13 @@
   "skillcraft.milestone.self": "✦ %s ▸ Level %s ✦",
   "skillcraft.milestone.announce": "✦ %s reached level %s in %s! ✦",
   "skillcraft.mastery.banner": "━━━━━━━━  ★ MASTERY ★  ━━━━━━━━",
-  "skillcraft.mastery.announce": "%s has mastered %s, reaching level %s!"
+  "skillcraft.mastery.announce": "%s has mastered %s, reaching level %s!",
+  "skillcraft.screen.skills.title": "Skills",
+  "skillcraft.screen.skills.level": "Level %s",
+  "skillcraft.screen.skills.progress": "%s / %s XP",
+  "skillcraft.screen.skills.maxed": "%s XP · Mastered",
+  "skillcraft.screen.skills.points": "%s skill points",
+  "skillcraft.screen.skills.total": "Total level: %s",
+  "key.skillcraft.open_skills": "Open Skills",
+  "key.category.skillcraft.main": "SkillCraft"
 }

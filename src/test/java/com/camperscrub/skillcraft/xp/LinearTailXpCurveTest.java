@@ -88,4 +88,14 @@ class LinearTailXpCurveTest {
         assertThrows(IllegalArgumentException.class, () -> new LinearTailSettings(MAX_LEVEL, 2000, -1, 55, 111));
         assertThrows(IllegalArgumentException.class, () -> new LinearTailSettings(0, 2000, 17, 55, 111));
     }
+
+    @Test
+    void xpWithinALevel() {
+        assertEquals(2_031, curve.xpIntoLevel(1_000_000));    // level 240 starts at 997,969
+        assertEquals(6_326, curve.xpSpanOfLevel(1_000_000));  // level 241 starts at 1,004,295
+        assertEquals(0, curve.xpIntoLevel(0));
+        assertEquals(2_055, curve.xpSpanOfLevel(0));
+        assertEquals(0, curve.xpIntoLevel(-50));
+        assertEquals(0, curve.xpSpanOfLevel(MAX_XP));
+    }
 }
