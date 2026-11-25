@@ -3,9 +3,11 @@
   "skill.skillcraft.woodcutting": "Woodcutting",
   "skill.skillcraft.excavation": "Excavation",
   "skill.skillcraft.swordsmanship": "Swordsmanship",
-  "skillcraft.levelup.point": "%s %s · +%s skill point",
-  "skillcraft.levelup.points": "%s %s · +%s skill points",
-  "skillcraft.levelup.milestone": "%s %s · Milestone! · +%s skill points",
-  "skillcraft.levelup.max.self": "%s mastered: level 1000!",
-  "skillcraft.levelup.max.announce": "%s has reached level %s in %s!"
+  "skillcraft.levelup.level": "%s ▸ Level %s",
+  "skillcraft.levelup.point": "+%s Skill Point",
+  "skillcraft.levelup.points": "+%s Skill Points",
+  "skillcraft.milestone.self": "✦ %s ▸ Level %s ✦",
+  "skillcraft.milestone.announce": "✦ %s reached level %s in %s! ✦",
+  "skillcraft.mastery.banner": "━━━━━━━━  ★ MASTERY ★  ━━━━━━━━",
+  "skillcraft.mastery.announce": "%s has mastered %s, reaching level %s!"
 }

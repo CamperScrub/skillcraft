@@ -5,22 +5,26 @@ import com.camperscrub.skillcraft.xp.XpAward;
 import com.camperscrub.skillcraft.xp.XpListener;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.OptionalInt;
 
 /** Sounds and messages when a skill levels up (see design doc: Level-up feedback). */
 public final class LevelUpFeedback implements XpListener {
 
     private final SkillPointRules pointRules;
     private final int maxLevel;
-    private final boolean announceMaxLevel;
+    private final boolean announceMilestones;
 
-    public LevelUpFeedback(SkillPointRules pointRules, int maxLevel, boolean announceMaxLevel) {
+    public LevelUpFeedback(SkillPointRules pointRules, int maxLevel, boolean announceMilestones) {
         this.pointRules = pointRules;
         this.maxLevel = maxLevel;
-        this.announceMaxLevel = announceMaxLevel;
+        this.announceMilestones = announceMilestones;
     }
 
     @Override
@@ -28,48 +32,65 @@ public final class LevelUpFeedback implements XpListener {
         if (!award.leveledUp()) {
             return;
         }
-        if (award.newLevel() == maxLevel) {
-            celebrateMaxLevel(player, award);
+        OptionalInt milestone = pointRules.milestoneCrossed(award.oldLevel(), award.newLevel());
+        if (milestone.isPresent()) {
+            celebrateMilestone(player, award, milestone.getAsInt());
             return;
         }
 
+        playSound(player, SoundEvents.PLAYER_LEVELUP);
         int points = pointRules.pointsEarned(award.oldLevel(), award.newLevel());
-        boolean milestone = pointRules.crossedMilestone(award.oldLevel(), award.newLevel());
-
-        if (milestone) {
-            playSound(player, SoundEvents.PLAYER_LEVELUP, 0.6f); // lower, deeper ding
-        } else {
-            playSound(player, SoundEvents.PLAYER_LEVELUP, 1.0f);
-        }
-
         if (points > 0) {
-            String key = milestone ? "skillcraft.levelup.milestone"
-                    : points == 1 ? "skillcraft.levelup.point" : "skillcraft.levelup.points";
-            player.sendOverlayMessage(Component.translatable(key,
-                    skillName(award), award.newLevel(), points));
+            player.sendOverlayMessage(levelLine(award)
+                    .append(Component.literal("   "))
+                    .append(pointsLine(points)));
         }
     }
 
-    private void celebrateMaxLevel(Player player, XpAward award) {
-        playSound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0f);
-        player.sendOverlayMessage(Component.translatable("skillcraft.levelup.max.self", skillName(award))
+    private void celebrateMilestone(Player player, XpAward award, int milestone) {
+        playSound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
+        player.sendOverlayMessage(Component.translatable("skillcraft.milestone.self",
+                        SkillStyle.name(award.skill()), milestone)
                 .withStyle(ChatFormatting.GOLD));
-
-        if (announceMaxLevel && player.level().getServer() != null) {
-            Component announcement = Component.translatable("skillcraft.levelup.max.announce",
-                            player.getDisplayName(), maxLevel, skillName(award))
-                    .withStyle(ChatFormatting.GOLD);
-            player.level().getServer().getPlayerList().broadcastSystemMessage(announcement, false);
-        }
         // Fireworks come in the next step.
+
+        MinecraftServer server = player.level().getServer();
+        if (!announceMilestones || server == null) {
+            return;
+        }
+        Component name = player.getDisplayName().copy().withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD);
+        Component level = Component.literal(String.valueOf(milestone)).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+        Component skill = SkillStyle.name(award.skill());
+
+        if (milestone == maxLevel) {
+            Component banner = Component.translatable("skillcraft.mastery.banner")
+                    .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+            server.getPlayerList().broadcastSystemMessage(banner, false);
+            server.getPlayerList().broadcastSystemMessage(Component.translatable("skillcraft.mastery.announce",
+                    name, skill, level).withStyle(ChatFormatting.YELLOW), false);
+            server.getPlayerList().broadcastSystemMessage(banner, false);
+        } else {
+            server.getPlayerList().broadcastSystemMessage(Component.translatable("skillcraft.milestone.announce",
+                    name, level, skill).withStyle(ChatFormatting.GOLD), false);
+        }
     }
 
-    private static Component skillName(XpAward award) {
-        return Component.translatable(award.skill().translationKey());
+    /** "Mining ▸ Level 40" */
+    private static MutableComponent levelLine(XpAward award) {
+        return Component.translatable("skillcraft.levelup.level",
+                        SkillStyle.name(award.skill()),
+                        Component.literal(String.valueOf(award.newLevel())).withStyle(ChatFormatting.WHITE))
+                .withStyle(ChatFormatting.GRAY);
     }
 
-    private static void playSound(Player player, SoundEvent sound, float pitch) {
+    /** "+1 Skill Point" / "+3 Skill Points" */
+    private static MutableComponent pointsLine(int points) {
+        String key = points == 1 ? "skillcraft.levelup.point" : "skillcraft.levelup.points";
+        return Component.translatable(key, points).withStyle(ChatFormatting.GREEN);
+    }
+
+    private static void playSound(Player player, SoundEvent sound) {
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                sound, SoundSource.PLAYERS, 0.75f, pitch);
+                sound, SoundSource.PLAYERS, 0.75f, 1.0f);
     }
 }

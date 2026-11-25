@@ -2,6 +2,8 @@ package com.camperscrub.skillcraft.tree;
 
 import java.util.List;
 
+import java.util.OptionalInt;
+
 /** When skill points are earned (see design doc: Skill points and the tree). Pure logic. */
 public final class SkillPointRules {
 
@@ -26,13 +28,14 @@ public final class SkillPointRules {
         return pointsAt(newLevel) - pointsAt(oldLevel);
     }
 
-    /** True if a milestone lies in (oldLevel, newLevel]: passed on the way up, not already reached before. */
-    public boolean crossedMilestone(int oldLevel, int newLevel) {
-        for (int milestone : MILESTONES) {
-            if (oldLevel < milestone && newLevel >= milestone) {
-                return true;   // found one, no need to look further
+    /** The highest milestone in (oldLevel, newLevel], or empty if none was crossed. */
+    public OptionalInt milestoneCrossed(int oldLevel, int newLevel) {
+        for (int i = MILESTONES.size() - 1; i >= 0; i--) {
+            int milestone = MILESTONES.get(i);
+            if (milestone > oldLevel && milestone <= newLevel) {
+                return OptionalInt.of(milestone);
             }
         }
-        return false;          // checked them all, none crossed
+        return OptionalInt.empty();
     }
 }

@@ -2,6 +2,8 @@ package com.camperscrub.skillcraft.tree;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.OptionalInt;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SkillPointRulesTest {
@@ -27,10 +29,9 @@ class SkillPointRulesTest {
 
     @Test
     void milestoneCrossing() {
-        assertTrue(rules.crossedMilestone(249, 250));
-        assertTrue(rules.crossedMilestone(0, 1000));
-        assertFalse(rules.crossedMilestone(250, 260)); // already reached before
-        assertFalse(rules.crossedMilestone(10, 20));
-        assertTrue(rules.crossedMilestone(499, 500));   // a milestone other than the first
+        assertEquals(OptionalInt.of(250), rules.milestoneCrossed(249, 250));
+        assertEquals(OptionalInt.of(1000), rules.milestoneCrossed(0, 1000)); // highest wins
+        assertEquals(OptionalInt.empty(), rules.milestoneCrossed(250, 260)); // already reached before
+        assertEquals(OptionalInt.empty(), rules.milestoneCrossed(10, 20));
     }
 }
