@@ -27,7 +27,16 @@ public class SkillCraftClient implements ClientModInitializer {
             }
         });
 
-        HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, SkillCraft.id("xp_bar"),
-                new XpBarHud(tracker, curve));
+        XpBarHud xpBar = new XpBarHud(tracker, curve);
+
+        // Move vanilla's boss bars down while our XP bar is showing
+        HudElementRegistry.replaceElement(VanillaHudElements.BOSS_BAR, original -> (graphics, deltaTracker) -> {
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(0, xpBar.verticalSpaceUsed());
+            original.extractRenderState(graphics, deltaTracker);
+            graphics.pose().popMatrix();
+        });
+
+        HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, SkillCraft.id("xp_bar"), xpBar);
     }
 }

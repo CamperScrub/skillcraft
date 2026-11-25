@@ -25,6 +25,7 @@ public final class XpBarHud implements HudElement {
     private static final int BAR_HEIGHT = 5;
     private static final int TEXT_Y = 4;
     private static final int BAR_Y = 15;
+    private static final int TOTAL_HEIGHT = 22; // label + bar + a little gap
 
     private final XpChangeTracker tracker;
     private final XpCurve curve;
@@ -84,5 +85,24 @@ public final class XpBarHud implements HudElement {
     /** Combines a 0xRRGGBB colour with an alpha (0–255) into 0xAARRGGBB. */
     private static int withAlpha(int rgb, int alpha) {
         return (alpha << 24) | (rgb & 0xFFFFFF);
+    }
+
+    private static final int SLIDE_TICKS = 6; // boss bars slide back up over 0.3 s, after the fade
+
+    /** How far down other top-of-screen elements should move right now (0 when hidden). */
+    public int verticalSpaceUsed() {
+        if (Minecraft.getInstance().player == null || tracker.activeSkill().isEmpty()) {
+            return 0;
+        }
+        int ticks = tracker.ticksSinceGain();
+        int fadeEnds = SHOW_TICKS + FADE_TICKS;
+        if (ticks <= fadeEnds) {
+            return TOTAL_HEIGHT;                       // our bar is still visible (even faintly): keep the space
+        }
+        int slideTick = ticks - fadeEnds;
+        if (slideTick >= SLIDE_TICKS) {
+            return 0;                                  // fully back in place
+        }
+        return TOTAL_HEIGHT * (SLIDE_TICKS - slideTick) / SLIDE_TICKS;
     }
 }
