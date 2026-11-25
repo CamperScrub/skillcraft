@@ -36,4 +36,9 @@ public final class XpRules {
         PlayerSkills updatedSkills = current.withXp(skill, newTotalXp);
         return new XpAward(updatedSkills, skill, actualGained, oldLevel, newLevel);
     }
+
+    /** Total XP at max level; XP never goes above this. */
+    public long maxTotalXp() {
+        return curve.totalXpForLevel(curve.maxLevel());
+    }
 }

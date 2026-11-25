@@ -1,5 +1,6 @@
 package com.camperscrub.skillcraft;
 
+import com.camperscrub.skillcraft.command.SkillCraftCommand;
 import com.camperscrub.skillcraft.data.*;
 import com.camperscrub.skillcraft.event.BlockBreakXpHandler;
 import com.camperscrub.skillcraft.event.BlockPlacedCallback;
@@ -45,5 +46,7 @@ public class SkillCraft implements ModInitializer {
         MobSpawnedCallback.EVENT.register(spawnOrigins::record);
 
         new CombatXpHandler(xpService, new CombatXpRules(0.5), SwordsmanshipXp.mobTable(), spawnOrigins).register();
+
+        new SkillCraftCommand(xpService, curve).register();
     }
 }

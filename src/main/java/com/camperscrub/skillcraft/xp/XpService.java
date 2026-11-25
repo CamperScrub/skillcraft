@@ -24,4 +24,14 @@ public final class XpService {
         }
         return award;
     }
+
+    public PlayerSkills skillsOf(Player player) {
+        return player.getAttachedOrCreate(SkillAttachments.PLAYER_SKILLS);
+    }
+
+    /** Sets a skill's total XP directly (clamped to 0..max). For admin commands; no level-up effects. */
+    public void setTotalXp(Player player, Skill skill, long totalXp) {
+        long clamped = Math.clamp(totalXp, 0, rules.maxTotalXp());
+        player.setAttached(SkillAttachments.PLAYER_SKILLS, skillsOf(player).withXp(skill, clamped));
+    }
 }
