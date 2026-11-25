@@ -2,5 +2,10 @@
   "skill.skillcraft.mining": "Mining",
   "skill.skillcraft.woodcutting": "Woodcutting",
   "skill.skillcraft.excavation": "Excavation",
-  "skill.skillcraft.swordsmanship": "Swordsmanship"
+  "skill.skillcraft.swordsmanship": "Swordsmanship",
+  "skillcraft.levelup.point": "%s %s · +%s skill point",
+  "skillcraft.levelup.points": "%s %s · +%s skill points",
+  "skillcraft.levelup.milestone": "%s %s · Milestone! · +%s skill points",
+  "skillcraft.levelup.max.self": "%s mastered: level 1000!",
+  "skillcraft.levelup.max.announce": "%s has reached level %s in %s!"
 }
