@@ -24,4 +24,14 @@ public final class SkillStyle {
     public static MutableComponent name(Skill skill) {
         return Component.translatable(skill.translationKey()).withStyle(colour(skill), ChatFormatting.BOLD);
     }
+
+    /** The skill's colour as 0xRRGGBB, matching its chat colour (used for fireworks). */
+    public static int rgb(Skill skill) {
+        return switch (skill) {
+            case MINING -> 0x55FFFF;        // aqua
+            case WOODCUTTING -> 0x55FF55;   // green
+            case EXCAVATION -> 0xFFFF55;    // yellow
+            case SWORDSMANSHIP -> 0xFF5555; // red
+        };
+    }
 }

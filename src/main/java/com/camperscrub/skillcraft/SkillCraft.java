@@ -7,6 +7,7 @@ import com.camperscrub.skillcraft.event.BlockPlacedCallback;
 import com.camperscrub.skillcraft.event.CombatXpHandler;
 import com.camperscrub.skillcraft.event.MobSpawnedCallback;
 import com.camperscrub.skillcraft.feedback.LevelUpFeedback;
+import com.camperscrub.skillcraft.feedback.MilestoneFireworks;
 import com.camperscrub.skillcraft.skill.excavation.ExcavationXp;
 import com.camperscrub.skillcraft.skill.mining.MiningXp;
 import com.camperscrub.skillcraft.skill.swordsmanship.SwordsmanshipXp;
@@ -35,7 +36,9 @@ public class SkillCraft implements ModInitializer {
 
         XpCurve curve = new LinearTailXpCurve(LinearTailSettings.DEFAULTS);
         SkillPointRules pointRules = new SkillPointRules();
-        LevelUpFeedback levelUpFeedback = new LevelUpFeedback(pointRules, curve.maxLevel(), true);
+        MilestoneFireworks fireworks = new MilestoneFireworks(curve.maxLevel());
+        fireworks.register();
+        LevelUpFeedback levelUpFeedback = new LevelUpFeedback(pointRules, fireworks, curve.maxLevel(), true);
         XpService xpService = new XpService(new XpRules(curve), List.of(levelUpFeedback));
 
         PlacedBlockTracker placedBlocks = new ChunkPlacedBlockTracker();

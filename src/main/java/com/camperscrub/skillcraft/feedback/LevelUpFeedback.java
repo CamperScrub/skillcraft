@@ -20,9 +20,11 @@ public final class LevelUpFeedback implements XpListener {
     private final SkillPointRules pointRules;
     private final int maxLevel;
     private final boolean announceMilestones;
+    private final MilestoneFireworks fireworks;
 
-    public LevelUpFeedback(SkillPointRules pointRules, int maxLevel, boolean announceMilestones) {
+    public LevelUpFeedback(SkillPointRules pointRules, MilestoneFireworks fireworks, int maxLevel, boolean announceMilestones) {
         this.pointRules = pointRules;
+        this.fireworks = fireworks;
         this.maxLevel = maxLevel;
         this.announceMilestones = announceMilestones;
     }
@@ -52,7 +54,7 @@ public final class LevelUpFeedback implements XpListener {
         player.sendOverlayMessage(Component.translatable("skillcraft.milestone.self",
                         SkillStyle.name(award.skill()), milestone)
                 .withStyle(ChatFormatting.GOLD));
-        // Fireworks come in the next step.
+        fireworks.launch(player, award.skill(), milestone);
 
         MinecraftServer server = player.level().getServer();
         if (!announceMilestones || server == null) {
