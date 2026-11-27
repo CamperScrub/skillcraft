@@ -31,4 +31,11 @@ public final class ChunkPlacedBlockTracker implements PlacedBlockTracker {
         chunk.setAttached(SkillAttachments.PLACED_BLOCKS, updated.isEmpty() ? null : updated);
         return true;
     }
+
+    @Override
+    public boolean isPlaced(Level level, BlockPos pos) {
+        return level.getChunk(pos)
+                .getAttachedOrElse(SkillAttachments.PLACED_BLOCKS, PlacedBlocks.EMPTY)
+                .contains(pos.asLong());
+    }
 }

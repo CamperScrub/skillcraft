@@ -10,6 +10,9 @@ public interface PlacedBlockTracker {
 
     void markPlaced(Level level, BlockPos pos);
 
+    /** True if a player placed the block at this position. Changes nothing. */
+    boolean isPlaced(Level level, BlockPos pos);
+
     /**
      * Forgets a position.
      *
