@@ -7,6 +7,7 @@ import com.camperscrub.skillcraft.event.BlockPlacedCallback;
 import com.camperscrub.skillcraft.event.CombatXpHandler;
 import com.camperscrub.skillcraft.event.MobSpawnedCallback;
 import com.camperscrub.skillcraft.event.PlacedBlockCleanup;
+import com.camperscrub.skillcraft.event.PlacedBlockPistonHandler;
 import com.camperscrub.skillcraft.feedback.LevelUpFeedback;
 import com.camperscrub.skillcraft.feedback.MilestoneFireworks;
 import com.camperscrub.skillcraft.proc.ChanceSource;
@@ -54,6 +55,7 @@ public class SkillCraft implements ModInitializer {
         PlacedBlockTracker placedBlocks = new ChunkPlacedBlockTracker();
         BlockPlacedCallback.EVENT.register(placedBlocks::markPlaced);
         new PlacedBlockCleanup(placedBlocks).register();
+        new PlacedBlockPistonHandler(placedBlocks).register();
         new BlockBreakXpHandler(xpService, placedBlocks, List.of(
                 MiningXp.table(),
                 WoodcuttingXp.table(),
