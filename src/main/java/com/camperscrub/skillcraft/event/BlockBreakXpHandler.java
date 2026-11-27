@@ -34,7 +34,7 @@ public final class BlockBreakXpHandler {
     }
 
     private void onBlockBroken(Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
-        boolean wasPlaced = placedBlocks.unmark(level, pos);
+        boolean wasPlaced = placedBlocks.isPlaced(level, pos);
         if (wasPlaced || player.isCreative()) {
             return;
         }
