@@ -1,6 +1,7 @@
 package com.camperscrub.skillcraft.event;
 
 import com.camperscrub.skillcraft.ability.AbilityService;
+import com.camperscrub.skillcraft.network.AbilityStatusPayload;
 import com.camperscrub.skillcraft.network.ReadyAbilityPayload;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -9,7 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 
-/** Connects the ability service to Minecraft: the key packet, starting to break a block, and the server tick. */
+/** Connects the ability service to Minecraft: the packets, starting to break a block, and the server tick. */
 public final class AbilityEventHandler {
 
     private final AbilityService abilities;
@@ -19,7 +20,9 @@ public final class AbilityEventHandler {
     }
 
     public void register() {
+        // Both payload types are registered here, in common code, so both sides know them.
         PayloadTypeRegistry.serverboundPlay().register(ReadyAbilityPayload.TYPE, ReadyAbilityPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(AbilityStatusPayload.TYPE, AbilityStatusPayload.CODEC);
         // Fabric runs play payload handlers on the server thread.
         ServerPlayNetworking.registerGlobalReceiver(ReadyAbilityPayload.TYPE,
                 (payload, context) -> abilities.pressReadyKey(context.player()));
@@ -33,4 +36,5 @@ public final class AbilityEventHandler {
 
         ServerTickEvents.END_SERVER_TICK.register(abilities::tick);
     }
+
 }

@@ -28,13 +28,18 @@ public final class AbilityService {
         AbilityPhase lastPhase = AbilityPhase.READY;
     }
 
+    private static final long READIED_TICKS = (long) AbilityTimings.READIED_SECONDS * AbilityTimings.TICKS_PER_SECOND;
+    private static final long COOLDOWN_TICKS = (long) AbilityTimings.COOLDOWN_SECONDS * AbilityTimings.TICKS_PER_SECOND;
+
     private final List<SuperAbility> abilities;
     private final SkillLevels levels;
+    private final AbilityStatusListener status;
     private final Map<UUID, Map<String, Tracked>> timers = new HashMap<>();
 
-    public AbilityService(List<SuperAbility> abilities, SkillLevels levels) {
+    public AbilityService(List<SuperAbility> abilities, SkillLevels levels, AbilityStatusListener status) {
         this.abilities = List.copyOf(abilities);
         this.levels = levels;
+        this.status = status;
     }
 
     /** The ready key: readies the held tool's ability, or lowers it if already readied. */
@@ -53,13 +58,13 @@ public final class AbilityService {
         long now = now(player);
         switch (tracked.timer.phase(now)) {
             case READY -> {
-                tracked.timer.ready(now, (long) AbilityTimings.READIED_SECONDS * AbilityTimings.TICKS_PER_SECOND);
-                tracked.lastPhase = AbilityPhase.READIED;
+                tracked.timer.ready(now, READIED_TICKS);
+                changed(player, ability, tracked, now);
                 message(player, Component.translatable("skillcraft.ability.readied", ability.name()), ChatFormatting.GREEN);
             }
             case READIED -> {
                 tracked.timer.lower();
-                tracked.lastPhase = AbilityPhase.READY;
+                changed(player, ability, tracked, now);
                 message(player, Component.translatable("skillcraft.ability.lowered", ability.name()), ChatFormatting.GRAY);
             }
             case COOLDOWN -> {
@@ -81,12 +86,11 @@ public final class AbilityService {
         }
         SuperAbility ability = held.get();
         Tracked tracked = tracked(player, ability);
+        long now = now(player);
         int level = levels.level(player, ability.skill());
-        long activeTicks = (long) AbilityTimings.durationSeconds(level) * AbilityTimings.TICKS_PER_SECOND;
-        long cooldownTicks = (long) AbilityTimings.COOLDOWN_SECONDS * AbilityTimings.TICKS_PER_SECOND;
-        if (tracked.timer.activate(now(player), activeTicks, cooldownTicks)) {
-            tracked.lastPhase = AbilityPhase.ACTIVE;
+        if (tracked.timer.activate(now, activeTicks(level), COOLDOWN_TICKS)) {
             ability.start(player, level);
+            changed(player, ability, tracked, now);
             message(player, Component.translatable("skillcraft.ability.activated", ability.name()), ChatFormatting.GOLD);
         }
     }
@@ -96,6 +100,17 @@ public final class AbilityService {
         Map<String, Tracked> mine = timers.get(player.getUUID());
         Tracked tracked = mine == null ? null : mine.get(ability.id());
         return tracked != null && tracked.timer.phase(now(player)) == AbilityPhase.ACTIVE;
+    }
+
+    /** The break speed boost from the player's active abilities, as a {@link BreakSpeedBoost}. */
+    public float breakSpeedMultiplier(ServerPlayer player, BlockState state) {
+        float multiplier = 1;
+        for (SuperAbility ability : abilities) {
+            if (isActive(player, ability)) {
+                multiplier *= ability.breakSpeedMultiplier(state);
+            }
+        }
+        return multiplier;
     }
 
     /** Every server tick: notices abilities that just ended, cooldowns that just ran out, and readies that lapsed. */
@@ -111,10 +126,10 @@ public final class AbilityService {
                 if (tracked == null) {
                     continue;
                 }
-                AbilityPhase phase = tracked.timer.phase(now);
-                if (phase != tracked.lastPhase) {
-                    onPhaseEnded(player, ability, tracked.lastPhase);
-                    tracked.lastPhase = phase;
+                AbilityPhase ended = tracked.lastPhase;
+                if (tracked.timer.phase(now) != ended) {
+                    changed(player, ability, tracked, now);
+                    onPhaseEnded(player, ability, ended);
                 }
             }
         }
@@ -131,6 +146,17 @@ public final class AbilityService {
             case READY -> {
             }
         }
+    }
+
+    /** Remembers the new phase and tells the status listener (and so the client). */
+    private void changed(ServerPlayer player, SuperAbility ability, Tracked tracked, long now) {
+        tracked.lastPhase = tracked.timer.phase(now);
+        long active = activeTicks(levels.level(player, ability.skill()));
+        status.onStatus(player, ability, tracked.lastPhase, tracked.timer.ticksLeft(now), active);
+    }
+
+    private static long activeTicks(int level) {
+        return (long) AbilityTimings.durationSeconds(level) * AbilityTimings.TICKS_PER_SECOND;
     }
 
     private Optional<SuperAbility> abilityForHeldTool(ServerPlayer player) {

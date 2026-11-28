@@ -6,6 +6,7 @@ import com.camperscrub.skillcraft.client.screen.SkillsScreen;
 import com.camperscrub.skillcraft.data.PlayerSkills;
 import com.camperscrub.skillcraft.data.SkillAttachments;
 import com.camperscrub.skillcraft.network.ReadyAbilityPayload;
+import com.camperscrub.skillcraft.skill.mining.SuperBreaker;
 import com.camperscrub.skillcraft.tree.SkillPointRules;
 import com.camperscrub.skillcraft.xp.LinearTailSettings;
 import com.camperscrub.skillcraft.xp.LinearTailXpCurve;
@@ -20,6 +21,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.sdl.SDLScancode;
+
+import java.util.List;
 
 /** Client-side composition root: everything that only exists on the player's computer. */
 public class SkillCraftClient implements ClientModInitializer {
@@ -37,6 +40,9 @@ public class SkillCraftClient implements ClientModInitializer {
                 "key.skillcraft.open_skills", InputConstants.Type.KEYBOARD, SDLScancode.SDL_SCANCODE_K, category));
         KeyMapping readyAbility = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.skillcraft.ready_ability", InputConstants.Type.KEYBOARD, SDLScancode.SDL_SCANCODE_R, category));
+
+        // Super abilities: client copy of the server's ability phases, and the break speed boost
+        new ClientAbilities(List.of(new SuperBreaker())).register();
 
         // Every client tick: watch for XP gains and handle key presses
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

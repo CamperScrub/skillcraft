@@ -24,6 +24,14 @@ public interface SuperAbility {
     /** True if starting to break {@code state} with the tool activates a readied ability. */
     boolean activatesOn(BlockState state);
 
+    /**
+     * How much faster {@code state} breaks while the ability is active. 1 means no change.
+     * Applied on both sides by {@link BreakSpeedBoosts}.
+     */
+    default float breakSpeedMultiplier(BlockState state) {
+        return 1;
+    }
+
     /** Called once when the ability starts. */
     void start(ServerPlayer player, int level);
 

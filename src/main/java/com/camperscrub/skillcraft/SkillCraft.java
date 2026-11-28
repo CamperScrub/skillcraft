@@ -3,12 +3,14 @@ package com.camperscrub.skillcraft;
 import com.camperscrub.skillcraft.ability.AbilityService;
 import com.camperscrub.skillcraft.ability.AbilityUnlockMessage;
 import com.camperscrub.skillcraft.ability.AbilityYield;
+import com.camperscrub.skillcraft.ability.BreakSpeedBoosts;
 import com.camperscrub.skillcraft.ability.SuperAbility;
 import com.camperscrub.skillcraft.command.SkillCraftCommand;
 import com.camperscrub.skillcraft.data.*;
 import com.camperscrub.skillcraft.event.*;
 import com.camperscrub.skillcraft.feedback.LevelUpFeedback;
 import com.camperscrub.skillcraft.feedback.MilestoneFireworks;
+import com.camperscrub.skillcraft.network.AbilityStatusSender;
 import com.camperscrub.skillcraft.proc.ChanceSource;
 import com.camperscrub.skillcraft.proc.ProcRoller;
 import com.camperscrub.skillcraft.proc.PseudoRandomProcRoller;
@@ -23,6 +25,7 @@ import com.camperscrub.skillcraft.yield.YieldRoller;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +55,10 @@ public class SkillCraft implements ModInitializer {
         XpService xpService = new XpService(new XpRules(curve), List.of(
                 levelUpFeedback, new LuckyStrikeUnlockMessage(), new AbilityUnlockMessage(superAbilities)));
         SkillLevels levels = (player, skill) -> curve.levelForXp(xpService.skillsOf(player).xp(skill));
-        AbilityService abilities = new AbilityService(superAbilities, levels);
+        AbilityService abilities = new AbilityService(superAbilities, levels, new AbilityStatusSender());
         new AbilityEventHandler(abilities).register();
+        BreakSpeedBoosts.register((player, state) ->
+                player instanceof ServerPlayer serverPlayer ? abilities.breakSpeedMultiplier(serverPlayer, state) : 1);
 
         PlacedBlockTracker placedBlocks = new ChunkPlacedBlockTracker();
         BlockPlacedCallback.EVENT.register(placedBlocks::markPlaced);
