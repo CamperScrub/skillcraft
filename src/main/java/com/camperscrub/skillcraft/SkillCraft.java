@@ -12,12 +12,15 @@ import com.camperscrub.skillcraft.network.OreSensePayload;
 import com.camperscrub.skillcraft.proc.ChanceSource;
 import com.camperscrub.skillcraft.proc.ProcRoller;
 import com.camperscrub.skillcraft.proc.PseudoRandomProcRoller;
+import com.camperscrub.skillcraft.skill.Skill;
 import com.camperscrub.skillcraft.skill.excavation.ExcavationXp;
 import com.camperscrub.skillcraft.skill.mining.*;
 import com.camperscrub.skillcraft.skill.swordsmanship.SwordsmanshipXp;
+import com.camperscrub.skillcraft.skill.woodcutting.WoodcuttingTags;
 import com.camperscrub.skillcraft.skill.woodcutting.WoodcuttingXp;
 import com.camperscrub.skillcraft.tree.SkillPointRules;
 import com.camperscrub.skillcraft.xp.*;
+import com.camperscrub.skillcraft.yield.LevelYield;
 import com.camperscrub.skillcraft.yield.YieldDropHandler;
 import com.camperscrub.skillcraft.yield.YieldRoller;
 import net.fabricmc.api.ModInitializer;
@@ -80,8 +83,10 @@ public class SkillCraft implements ModInitializer {
         // Passives
         ProcRoller procs = new PseudoRandomProcRoller(ChanceSource.of(RandomSource.create()));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> procs.forget(handler.getPlayer().getUUID()));
+
         new YieldDropHandler(List.of(
-                new BountifulVeins(levels),
+                new LevelYield(Skill.MINING, MiningTags.MINING_YIELD, levels),        // Bountiful Veins
+                new LevelYield(Skill.WOODCUTTING, WoodcuttingTags.WOODCUTTING_YIELD, levels), // Timber Yield
                 new AbilityYield(superBreaker, MiningTags.MINING_YIELD, abilities, levels)
         ), new YieldRoller(procs), placedBlocks).register();
 
