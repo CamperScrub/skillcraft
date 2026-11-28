@@ -56,4 +56,22 @@ class LuckyStrikeTest {
     void stayingBelow400DoesNotUnlock() {
         assertFalse(LuckyStrike.unlockedBetween(100, 399));
     }
+
+    @Test
+    void improvesAtEachHundredAfterUnlocking() {
+        assertTrue(LuckyStrike.improvedBetween(499, 500));
+        assertTrue(LuckyStrike.improvedBetween(950, 1000));
+    }
+
+    @Test
+    void doesNotImproveBetweenSteps() {
+        assertFalse(LuckyStrike.improvedBetween(500, 599));
+    }
+
+    @Test
+    void unlockingIsNotAnImprovement() {
+        // 399 → 400 is the unlock message, not "improved"
+        assertFalse(LuckyStrike.improvedBetween(399, 400));
+        assertFalse(LuckyStrike.improvedBetween(350, 520));
+    }
 }

@@ -52,4 +52,9 @@ public final class AbilityTimings {
     public static String minutesAndSeconds(long seconds) {
         return "%d:%02d".formatted(seconds / 60, seconds % 60);
     }
+
+    /** True if a level-up from {@code oldLevel} to {@code newLevel} stepped the growing effect up after it was already unlocked. */
+    public static boolean improvedBetween(int oldLevel, int newLevel) {
+        return oldLevel >= UNLOCK_LEVEL && steps(newLevel) > steps(oldLevel);
+    }
 }

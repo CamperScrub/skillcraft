@@ -20,11 +20,14 @@ public final class LevelUpFeedback implements XpListener {
     private final SkillPointRules pointRules;
     private final int maxLevel;
     private final boolean announceMilestones;
+    private final ActionBar actionBar;
     private final MilestoneFireworks fireworks;
 
-    public LevelUpFeedback(SkillPointRules pointRules, MilestoneFireworks fireworks, int maxLevel, boolean announceMilestones) {
+    public LevelUpFeedback(SkillPointRules pointRules, MilestoneFireworks fireworks, ActionBar actionBar,
+                           int maxLevel, boolean announceMilestones) {
         this.pointRules = pointRules;
         this.fireworks = fireworks;
+        this.actionBar = actionBar;
         this.maxLevel = maxLevel;
         this.announceMilestones = announceMilestones;
     }
@@ -43,7 +46,7 @@ public final class LevelUpFeedback implements XpListener {
         playSound(player, SoundEvents.PLAYER_LEVELUP);
         int points = pointRules.pointsEarned(award.oldLevel(), award.newLevel());
         if (points > 0) {
-            player.sendOverlayMessage(levelLine(award)
+            actionBar.show(player, levelLine(award)
                     .append(Component.literal("   "))
                     .append(pointsLine(points)));
         }
@@ -51,7 +54,7 @@ public final class LevelUpFeedback implements XpListener {
 
     private void celebrateMilestone(Player player, XpAward award, int milestone) {
         playSound(player, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE);
-        player.sendOverlayMessage(Component.translatable("skillcraft.milestone.self",
+        actionBar.show(player, Component.translatable("skillcraft.milestone.self",
                         SkillStyle.name(award.skill()), milestone)
                 .withStyle(ChatFormatting.GOLD));
         fireworks.launch(player, award.skill(), milestone);

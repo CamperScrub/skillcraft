@@ -32,4 +32,9 @@ public final class LuckyStrike {
     public static boolean unlockedBetween(int oldLevel, int newLevel) {
         return oldLevel < UNLOCK_LEVEL && newLevel >= UNLOCK_LEVEL;
     }
+
+    /** True if a level-up from {@code oldLevel} to {@code newLevel} raised the chance after it was already unlocked. */
+    public static boolean improvedBetween(int oldLevel, int newLevel) {
+        return oldLevel >= UNLOCK_LEVEL && chanceAtLevel(newLevel) > chanceAtLevel(oldLevel);
+    }
 }

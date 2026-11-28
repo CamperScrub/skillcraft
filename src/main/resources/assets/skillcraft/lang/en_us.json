@@ -28,5 +28,8 @@
   "skillcraft.ability.wore_off": "%s wore off",
   "skillcraft.ability.refreshed": "%s is ready again",
   "skillcraft.ability.cooldown": "%s is on cooldown (%s)",
-  "skillcraft.ability.locked": "%s unlocks at level %s"
+  "skillcraft.ability.locked": "%s unlocks at level %s",
+  "skillcraft.improved.lucky_strike": "✦ Lucky Strike improved: %s",
+  "skillcraft.ability.improved": "✦ %s improved: %s",
+  "skillcraft.ability.bonus_yield": "+%s Yield"
 }

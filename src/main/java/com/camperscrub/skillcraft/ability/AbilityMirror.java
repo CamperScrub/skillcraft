@@ -36,7 +36,7 @@ public final class AbilityMirror {
         if (entry == null) {
             return false;
         }
-        return entry.phase == AbilityPhase.ACTIVE && now < entry.endsAt();
+        return entry.phase() == AbilityPhase.ACTIVE && now < entry.endsAt();
     }
 
     /**

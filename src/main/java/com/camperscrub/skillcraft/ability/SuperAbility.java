@@ -32,6 +32,15 @@ public interface SuperAbility {
         return 1;
     }
 
+    /**
+     * What the growing effect is at {@code level}, for the "improved" message. The default is the
+     * gathering abilities' Yield bonus ("+10 Yield"); Swordsmanship's ability will override it.
+     */
+    default Component improvement(int level) {
+        return Component.translatable("skillcraft.ability.bonus_yield",
+                AbilityYield.YIELD_PER_STEP * AbilityTimings.steps(level));
+    }
+
     /** Called once when the ability starts. */
     void start(ServerPlayer player, int level);
 

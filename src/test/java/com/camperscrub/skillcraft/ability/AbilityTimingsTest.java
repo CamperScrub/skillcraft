@@ -54,4 +54,21 @@ class AbilityTimingsTest {
         assertEquals("3:12", AbilityTimings.minutesAndSeconds(192));
         assertEquals("0:05", AbilityTimings.minutesAndSeconds(5));
     }
+
+    @Test
+    void improvesEvery50LevelsAfterUnlocking() {
+        assertTrue(AbilityTimings.improvedBetween(99, 100));
+        assertTrue(AbilityTimings.improvedBetween(990, 1000));
+    }
+
+    @Test
+    void doesNotImproveBetweenSteps() {
+        assertFalse(AbilityTimings.improvedBetween(100, 149));
+    }
+
+    @Test
+    void unlockingIsNotAnImprovement() {
+        assertFalse(AbilityTimings.improvedBetween(49, 50));
+        assertFalse(AbilityTimings.improvedBetween(20, 120));
+    }
 }

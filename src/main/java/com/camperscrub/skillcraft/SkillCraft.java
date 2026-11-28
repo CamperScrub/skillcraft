@@ -1,15 +1,12 @@
 package com.camperscrub.skillcraft;
 
-import com.camperscrub.skillcraft.ability.AbilityService;
-import com.camperscrub.skillcraft.ability.AbilityUnlockMessage;
-import com.camperscrub.skillcraft.ability.AbilityYield;
-import com.camperscrub.skillcraft.ability.BreakSpeedBoosts;
-import com.camperscrub.skillcraft.ability.SuperAbility;
+import com.camperscrub.skillcraft.ability.*;
 import com.camperscrub.skillcraft.command.SkillCraftCommand;
 import com.camperscrub.skillcraft.data.*;
 import com.camperscrub.skillcraft.event.*;
 import com.camperscrub.skillcraft.feedback.LevelUpFeedback;
 import com.camperscrub.skillcraft.feedback.MilestoneFireworks;
+import com.camperscrub.skillcraft.feedback.QueuedActionBar;
 import com.camperscrub.skillcraft.network.AbilityStatusSender;
 import com.camperscrub.skillcraft.network.OreSensePayload;
 import com.camperscrub.skillcraft.proc.ChanceSource;
@@ -51,11 +48,13 @@ public class SkillCraft implements ModInitializer {
         SkillPointRules pointRules = new SkillPointRules();
         MilestoneFireworks fireworks = new MilestoneFireworks(curve.maxLevel());
         fireworks.register();
-        LevelUpFeedback levelUpFeedback = new LevelUpFeedback(pointRules, fireworks, curve.maxLevel(), true);
+        QueuedActionBar actionBar = new QueuedActionBar();
+        actionBar.register();
+        LevelUpFeedback levelUpFeedback = new LevelUpFeedback(pointRules, fireworks, actionBar, curve.maxLevel(), true);
         SuperBreaker superBreaker = new SuperBreaker();
         List<SuperAbility> superAbilities = List.of(superBreaker);
         XpService xpService = new XpService(new XpRules(curve), List.of(
-                levelUpFeedback, new LuckyStrikeUnlockMessage(), new AbilityUnlockMessage(superAbilities)));
+                levelUpFeedback, new LuckyStrikeMessages(actionBar), new AbilityMessages(superAbilities, actionBar)));
         SkillLevels levels = (player, skill) -> curve.levelForXp(xpService.skillsOf(player).xp(skill));
         AbilityService abilities = new AbilityService(superAbilities, levels, new AbilityStatusSender());
         new AbilityEventHandler(abilities).register();

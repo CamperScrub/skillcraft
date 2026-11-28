@@ -14,8 +14,11 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public final class SuperBreaker implements SuperAbility {
 
-    /** 5× break speed: most pickaxe blocks break in one to three ticks. */
-    private static final float SPEED_MULTIPLIER = 5;
+    /**
+     * 45× break speed: stone, deepslate and ores break instantly even with a wooden pickaxe,
+     * while obsidian with a diamond pickaxe still takes about a quarter of a second.
+     */
+    private static final float SPEED_MULTIPLIER = 45;
 
     @Override
     public String id() {
