@@ -17,5 +17,6 @@
   "skillcraft.screen.skills.points": "%s skill points",
   "skillcraft.screen.skills.total": "Total level: %s",
   "key.skillcraft.open_skills": "Open Skills",
-  "key.category.skillcraft.main": "SkillCraft"
+  "key.category.skillcraft.main": "SkillCraft",
+  "skillcraft.unlock.lucky_strike": "✦ Lucky Strike unlocked!"
 }

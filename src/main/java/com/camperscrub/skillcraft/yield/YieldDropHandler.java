@@ -1,19 +1,14 @@
 package com.camperscrub.skillcraft.yield;
 
 import com.camperscrub.skillcraft.data.PlacedBlockTracker;
+import com.camperscrub.skillcraft.drops.NaturalBreak;
 import com.camperscrub.skillcraft.proc.ProcKey;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,27 +39,15 @@ public final class YieldDropHandler {
         if (drops.isEmpty()) {
             return;
         }
-        // MODIFY_DROPS fires for every loot table (chests, mobs, fishing...). Keep block drops
-        // caused by a player.
-        BlockState state = context.getOptional(LootContextParams.BLOCK_STATE);
-        Vec3 origin = context.getOptional(LootContextParams.ORIGIN);
-        if (state == null || origin == null
-                || !(context.getOptional(LootContextParams.THIS_ENTITY) instanceof ServerPlayer player)) {
+        Optional<NaturalBreak> found = NaturalBreak.from(table, context, placedBlocks);
+        if (found.isEmpty()) {
             return;
         }
-        // Only the block's own table, not one it pulls in, so the same drops are never copied twice.
-        Optional<ResourceKey<LootTable>> blockTable = state.getBlock().getLootTable();
-        if (blockTable.isEmpty() || !table.is(blockTable.get())) {
-            return;
-        }
-        // Natural blocks only. Without this, silk-touched ore could be placed and re-mined forever.
-        if (player.isCreative() || placedBlocks.isPlaced(context.getLevel(), BlockPos.containing(origin))) {
-            return;
-        }
+        NaturalBreak broken = found.get();
 
         double yield = 0;
         for (YieldSource source : sources) {
-            yield += source.yieldFor(player, state);
+            yield += source.yieldFor(broken.player(), broken.state());
         }
         if (yield <= 0) {
             return;
@@ -72,7 +55,7 @@ public final class YieldDropHandler {
 
         // One counter per kind of drop, so cheap ores never build up the chance for rare ones.
         String dropId = BuiltInRegistries.ITEM.getKey(drops.getFirst().getItem()).toString();
-        int copies = roller.extraCopies(player.getUUID(), new ProcKey("yield", dropId), yield);
+        int copies = roller.extraCopies(broken.player().getUUID(), new ProcKey("yield", dropId), yield);
         addCopies(drops, copies);
     }
 

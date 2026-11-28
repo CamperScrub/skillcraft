@@ -14,8 +14,7 @@ import com.camperscrub.skillcraft.proc.ChanceSource;
 import com.camperscrub.skillcraft.proc.ProcRoller;
 import com.camperscrub.skillcraft.proc.PseudoRandomProcRoller;
 import com.camperscrub.skillcraft.skill.excavation.ExcavationXp;
-import com.camperscrub.skillcraft.skill.mining.BountifulVeins;
-import com.camperscrub.skillcraft.skill.mining.MiningXp;
+import com.camperscrub.skillcraft.skill.mining.*;
 import com.camperscrub.skillcraft.skill.swordsmanship.SwordsmanshipXp;
 import com.camperscrub.skillcraft.skill.woodcutting.WoodcuttingXp;
 import com.camperscrub.skillcraft.tree.SkillPointRules;
@@ -49,7 +48,7 @@ public class SkillCraft implements ModInitializer {
         MilestoneFireworks fireworks = new MilestoneFireworks(curve.maxLevel());
         fireworks.register();
         LevelUpFeedback levelUpFeedback = new LevelUpFeedback(pointRules, fireworks, curve.maxLevel(), true);
-        XpService xpService = new XpService(new XpRules(curve), List.of(levelUpFeedback));
+        XpService xpService = new XpService(new XpRules(curve), List.of(levelUpFeedback, new LuckyStrikeUnlockMessage()));
         SkillLevels levels = (player, skill) -> curve.levelForXp(xpService.skillsOf(player).xp(skill));
 
         PlacedBlockTracker placedBlocks = new ChunkPlacedBlockTracker();
@@ -72,6 +71,12 @@ public class SkillCraft implements ModInitializer {
         new YieldDropHandler(List.of(
                 new BountifulVeins(levels)
         ), new YieldRoller(procs), placedBlocks).register();
+
+        new LuckyStrikeDropHandler(List.of(
+                LuckyStrikeList.of("stone"),
+                LuckyStrikeList.of("deepslate"),
+                LuckyStrikeList.of("netherrack")
+        ), levels, procs, placedBlocks).register();
 
         new SkillCraftCommand(xpService, curve).register();
     }
