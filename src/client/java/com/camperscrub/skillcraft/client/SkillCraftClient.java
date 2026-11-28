@@ -5,6 +5,7 @@ import com.camperscrub.skillcraft.client.hud.XpBarHud;
 import com.camperscrub.skillcraft.client.screen.SkillsScreen;
 import com.camperscrub.skillcraft.data.PlayerSkills;
 import com.camperscrub.skillcraft.data.SkillAttachments;
+import com.camperscrub.skillcraft.network.ReadyAbilityPayload;
 import com.camperscrub.skillcraft.tree.SkillPointRules;
 import com.camperscrub.skillcraft.xp.LinearTailSettings;
 import com.camperscrub.skillcraft.xp.LinearTailXpCurve;
@@ -14,6 +15,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.KeyMapping;
@@ -33,6 +35,8 @@ public class SkillCraftClient implements ClientModInitializer {
         KeyMapping.Category category = KeyMapping.Category.register(SkillCraft.id("main"));
         KeyMapping openSkills = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.skillcraft.open_skills", InputConstants.Type.KEYBOARD, SDLScancode.SDL_SCANCODE_K, category));
+        KeyMapping readyAbility = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+                "key.skillcraft.ready_ability", InputConstants.Type.KEYBOARD, SDLScancode.SDL_SCANCODE_R, category));
 
         // Every client tick: watch for XP gains and handle key presses
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -44,6 +48,9 @@ public class SkillCraftClient implements ClientModInitializer {
 
             while (openSkills.consumeClick()) {
                 client.gui.setScreen(new SkillsScreen(curve, pointRules));
+            }
+            while (readyAbility.consumeClick()) {
+                ClientPlayNetworking.send(ReadyAbilityPayload.INSTANCE);
             }
         });
 

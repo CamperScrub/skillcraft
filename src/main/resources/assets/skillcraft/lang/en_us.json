@@ -18,5 +18,15 @@
   "skillcraft.screen.skills.total": "Total level: %s",
   "key.skillcraft.open_skills": "Open Skills",
   "key.category.skillcraft.main": "SkillCraft",
-  "skillcraft.unlock.lucky_strike": "✦ Lucky Strike unlocked!"
+  "skillcraft.unlock.lucky_strike": "✦ Lucky Strike unlocked!",
+  "key.skillcraft.ready_ability": "Ready Super Ability",
+  "ability.skillcraft.super_breaker": "Super Breaker",
+  "skillcraft.unlock.ability": "✦ %s unlocked!",
+  "skillcraft.ability.readied": "%s readied",
+  "skillcraft.ability.lowered": "%s lowered",
+  "skillcraft.ability.activated": "✦ %s activated!",
+  "skillcraft.ability.wore_off": "%s wore off",
+  "skillcraft.ability.refreshed": "%s is ready again",
+  "skillcraft.ability.cooldown": "%s is on cooldown (%s)",
+  "skillcraft.ability.locked": "%s unlocks at level %s"
 }

@@ -1,13 +1,12 @@
 package com.camperscrub.skillcraft;
 
+import com.camperscrub.skillcraft.ability.AbilityService;
+import com.camperscrub.skillcraft.ability.AbilityUnlockMessage;
+import com.camperscrub.skillcraft.ability.AbilityYield;
+import com.camperscrub.skillcraft.ability.SuperAbility;
 import com.camperscrub.skillcraft.command.SkillCraftCommand;
 import com.camperscrub.skillcraft.data.*;
-import com.camperscrub.skillcraft.event.BlockBreakXpHandler;
-import com.camperscrub.skillcraft.event.BlockPlacedCallback;
-import com.camperscrub.skillcraft.event.CombatXpHandler;
-import com.camperscrub.skillcraft.event.MobSpawnedCallback;
-import com.camperscrub.skillcraft.event.PlacedBlockCleanup;
-import com.camperscrub.skillcraft.event.PlacedBlockPistonHandler;
+import com.camperscrub.skillcraft.event.*;
 import com.camperscrub.skillcraft.feedback.LevelUpFeedback;
 import com.camperscrub.skillcraft.feedback.MilestoneFireworks;
 import com.camperscrub.skillcraft.proc.ChanceSource;
@@ -48,8 +47,13 @@ public class SkillCraft implements ModInitializer {
         MilestoneFireworks fireworks = new MilestoneFireworks(curve.maxLevel());
         fireworks.register();
         LevelUpFeedback levelUpFeedback = new LevelUpFeedback(pointRules, fireworks, curve.maxLevel(), true);
-        XpService xpService = new XpService(new XpRules(curve), List.of(levelUpFeedback, new LuckyStrikeUnlockMessage()));
+        SuperBreaker superBreaker = new SuperBreaker();
+        List<SuperAbility> superAbilities = List.of(superBreaker);
+        XpService xpService = new XpService(new XpRules(curve), List.of(
+                levelUpFeedback, new LuckyStrikeUnlockMessage(), new AbilityUnlockMessage(superAbilities)));
         SkillLevels levels = (player, skill) -> curve.levelForXp(xpService.skillsOf(player).xp(skill));
+        AbilityService abilities = new AbilityService(superAbilities, levels);
+        new AbilityEventHandler(abilities).register();
 
         PlacedBlockTracker placedBlocks = new ChunkPlacedBlockTracker();
         BlockPlacedCallback.EVENT.register(placedBlocks::markPlaced);
@@ -69,7 +73,8 @@ public class SkillCraft implements ModInitializer {
         ProcRoller procs = new PseudoRandomProcRoller(ChanceSource.of(RandomSource.create()));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> procs.forget(handler.getPlayer().getUUID()));
         new YieldDropHandler(List.of(
-                new BountifulVeins(levels)
+                new BountifulVeins(levels),
+                new AbilityYield(superBreaker, MiningTags.MINING_YIELD, abilities, levels)
         ), new YieldRoller(procs), placedBlocks).register();
 
         new LuckyStrikeDropHandler(List.of(
