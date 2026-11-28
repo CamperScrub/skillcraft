@@ -43,6 +43,7 @@ public class SkillCraftClient implements ClientModInitializer {
 
         // Super abilities: client copy of the server's ability phases, and the break speed boost
         new ClientAbilities(List.of(new SuperBreaker())).register();
+        new OreSenseRenderer().register();
 
         // Every client tick: watch for XP gains and handle key presses
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

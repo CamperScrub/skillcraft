@@ -11,6 +11,7 @@ import com.camperscrub.skillcraft.event.*;
 import com.camperscrub.skillcraft.feedback.LevelUpFeedback;
 import com.camperscrub.skillcraft.feedback.MilestoneFireworks;
 import com.camperscrub.skillcraft.network.AbilityStatusSender;
+import com.camperscrub.skillcraft.network.OreSensePayload;
 import com.camperscrub.skillcraft.proc.ChanceSource;
 import com.camperscrub.skillcraft.proc.ProcRoller;
 import com.camperscrub.skillcraft.proc.PseudoRandomProcRoller;
@@ -24,6 +25,7 @@ import com.camperscrub.skillcraft.yield.YieldDropHandler;
 import com.camperscrub.skillcraft.yield.YieldRoller;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -64,6 +66,8 @@ public class SkillCraft implements ModInitializer {
         BlockPlacedCallback.EVENT.register(placedBlocks::markPlaced);
         new PlacedBlockCleanup(placedBlocks).register();
         new PlacedBlockPistonHandler(placedBlocks).register();
+        new OreSense(abilities, superBreaker, placedBlocks,
+                (player, ores) -> ServerPlayNetworking.send(player, new OreSensePayload(ores))).register();
         new BlockBreakXpHandler(xpService, placedBlocks, List.of(
                 MiningXp.table(),
                 WoodcuttingXp.table(),
